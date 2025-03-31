@@ -7,7 +7,7 @@ import { NgClass } from '@angular/common';
 import { toDoFilterType } from './store/todos.model';
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, FormsModule, NgClass],
+  imports: [FormsModule, NgClass],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   // providers:[ToDostore]
