@@ -1,22 +1,66 @@
 <div class="h-screen flex flex-col items-center justify-center w-full">
-    <div class="max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700">
-      <div class="flex items-center justify-between w-full mb-1">
-        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Sparkling Tasks!</h5>
-        <p class="mb-2 text-gray-900 text-xl font-bold text-md dark:text-white">{{toDoStore.todos().length}}</p>
+  <div
+    class="max-w-xl p-6 bg-white border border-gray-200 rounded-lg shadow-sm dark:bg-gray-800 dark:border-gray-700 m-3">
+    <img src="icon-2.png" alt="icon-2" class="w-24">
+    <div class="flex items-center justify-between w-full mb-1">
+      <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Sparkling Tasks!</h5>
+      <p class="mb-2 text-gray-900 text-xl font-bold text-md dark:text-white">
+        {{toDoStore.completedToDos()?.length}}/{{toDoStore.todos().length}}</p>
+    </div>
+    <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">A client-side task management application utilizing
+      local storage for data persistence.</p>
+    <div class="flex items-center justify-center content-center gap-2 mt-3">
+      <input type="text" id="first_name"
+        class="bg-gray-50 border border-gray-300 text-gray-900 text-md rounded-lg focus:ring-purple-300 focus:border-purple-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
+        placeholder="Enter your task" [(ngModel)]="taskValue" required />
+      <button type="button" [disabled]="!taskValue"
+        class="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:cursor-pointer disabled:bg-gray-300  cursor-none"
+        (click)="addTask()">Add</button>
+    </div>
+    <div class="flex rounded-md m-3 mb-5 items-center justify-center" role="group">
+      <div class="inline-flex">
+        <!-- All Button -->
+        <button type="button" (click)="toggleFilter('all')"
+          class="cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium border border-gray-500 rounded-s-lg focus:outline-none"
+          [ngClass]="{
+      'bg-gray-900 text-white dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500': toDoStore.toDoFilter() === 'all',
+      'text-gray-900 bg-transparent hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:bg-gray-900 focus:text-white dark:border-gray-500 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700': toDoStore.toDoFilter() !== 'all'
+    }">
+          All
+        </button>
+
+        <!-- Completed Button -->
+        <button type="button" (click)="toggleFilter('completed')"
+          class="cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium border-t border-b border-gray-500 focus:outline-none"
+          [ngClass]="{
+      'bg-gray-900 text-white dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500': toDoStore.toDoFilter() === 'completed',
+      'text-gray-900 bg-transparent hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:bg-gray-900 focus:text-white dark:border-gray-500 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700': toDoStore.toDoFilter() !== 'completed'
+    }">
+          Completed
+        </button>
+
+        <!-- Pending Button -->
+        <button type="button" (click)="toggleFilter('pending')"
+          class="cursor-pointer inline-flex items-center px-4 py-2 text-sm font-medium border border-gray-500 rounded-e-lg focus:outline-none"
+          [ngClass]="{
+      'bg-gray-900 text-white dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500': toDoStore.toDoFilter() === 'pending',
+      'text-gray-900 bg-transparent hover:bg-gray-900 hover:text-white focus:z-10 focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-300 focus:bg-gray-900 focus:text-white dark:border-gray-500 dark:text-white dark:hover:text-white dark:hover:bg-gray-700 dark:focus:bg-gray-700': toDoStore.toDoFilter() !== 'pending'
+    }">
+          Pending
+        </button>
       </div>
-      <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">A client-side task management application utilizing local storage for data persistence.</p>
-      <div class="flex items-center justify-center content-center gap-2 mt-3">
-        <input type="text" id="first_name" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-purple-300 focus:border-purple-300 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500" placeholder="Enter your task" 
-        [(ngModel)]="taskValue" required />
-        <button type="button" [disabled]="!taskValue" class="text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center hover:cursor-pointer disabled:bg-gray-300  cursor-none" (click)="addTask()">Add</button>
-      </div>
-      <div class="flex flex-col items-start justify-center p-3">
-      @for(task of toDoStore.todos();track $index){
-        <div class="flex items-center">
-          <input id="checked-checkbox"  [checked]="task.completed" type="checkbox" value="" class="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" (change)="toggleTodo(task.id)">
-          <label for="checked-checkbox" class="ms-2 text-md font-medium text-gray-900 dark:text-gray-300" [ngClass]="{'line-through':task.completed}">{{task.title}}</label>
+
+    </div>
+    <div class="flex flex-col items-start mt-3 p-3 max-h-80 overflow-y-auto">
+      @for(task of toDoStore.filteredToDos();track $index){
+      <div class="flex justify-center items-start mb-3">
+        <input id="checked-checkbox" [checked]="task.completed" type="checkbox" value=""
+          class="w-6 h-6 text-purple-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-purple-500 dark:focus:ring-purple-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          (change)="toggleTodo(task.id)">
+        <label for="checked-checkbox" class="ms-2 mb-1.5 text-md font-medium text-gray-900 dark:text-gray-300"
+          [ngClass]="{'line-through':task.completed}">{{task.title}}</label>
       </div>
       }
-      </div>
     </div>
+  </div>
 </div>
