@@ -1,6 +1,6 @@
-import { patchState, signalStore, withComputed, withMethods, withState } from '@ngrx/signals';
+import { getState, patchState, signalStore, withComputed, withHooks, withMethods, withState } from '@ngrx/signals';
 import { toDoFilterType, todoItem } from './todos.model';
-import { computed } from '@angular/core';
+import { computed, effect } from '@angular/core';
 
 //we should mention the type for an our state
 type TodoState = {
@@ -48,5 +48,14 @@ export const ToDostore = signalStore(
         toggleFilter(filterValue: toDoFilterType) {
             patchState(store, { toDoFilter: filterValue })
         }
-    }))
+    })),
+    withHooks({
+        onInit: (store) => {
+            effect(() => {
+                const storeState = getState(store);
+                localStorage.setItem('toDoList', JSON.stringify(storeState.todos));
+            })
+            patchState(store, { todos: JSON.parse(localStorage.getItem('toDoList') as any || '[]') });
+        }
+    })
 );
